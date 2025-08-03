@@ -1,0 +1,8 @@
+### POST request for testing
+POST http://localhost:8080/api/response/generate
+Content-Type: application/json
+
+{
+  "requestContent": "",
+  "tone": ""
+}
