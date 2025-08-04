@@ -33,6 +33,7 @@ public class ResponseGeneratorServiceImpl implements ResponseGeneratorService {
         logger.info("Service:: Building Prompt Response for UserRequest {}", userRequest);
         // Build prompt
         String prompt = buildPrompt(userRequest);
+        logger.info("Service:: Prompt: {}", prompt);
 
         // Craft a request
         logger.info("Service:: Crafting a request");
