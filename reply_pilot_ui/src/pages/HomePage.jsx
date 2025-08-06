@@ -2,10 +2,12 @@ import Header from "../components/Header";
 import PilotConsole from "../components/PilotConsole";
 import Features from "../components/Features";
 import Footer from "../components/Footer";
+import Notice from "../components/Notice.jsx";
 
 const HomePage = () => {
     return(
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 pt-16">
+            <Notice />
             <div className="max-w-5xl mx-auto">
                 {/* Header */}
                 <Header />
