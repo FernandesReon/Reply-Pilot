@@ -3,19 +3,18 @@ import { useState } from "react";
 import { generateResponse } from "../services/service";
 
 const PilotConsole = () => {
-
     const [data, setData] = useState({
         requestContent: "",
         tone: ""
-    })
+    });
 
-    const [output, setOutput] = useState("")
-    const [isGenerating, setIsGenerating] = useState(false)
-    const [copied, setCopied] = useState(false)
+    const [output, setOutput] = useState("");
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [copied, setCopied] = useState(false);
     const [error, setError] = useState({
         errors: {},
         isError: false
-    })
+    });
 
     const replyOptions = [
         { value: "professional", label: "Professional Reply" },
@@ -24,20 +23,37 @@ const PilotConsole = () => {
         { value: "follow-up", label: "Follow-up Message" },
         { value: "decline", label: "Polite Decline" },
         { value: "thank-you", label: "Thank You Note" },
-    ]
+    ];
 
     const handleChange = (event) => {
-        const { name, value } = event.target
-        setData({ ...setData, [name]: value })
+        const { name, value } = event.target;
+        const newData = { ...data, [name]: value };
+        setData(newData);
 
-        setError({
-            errors: {},
-            isError: false
-        })
-    }
+        setError({ errors: {}, isError: false });
+
+        // Auto-generate if tone is changed and content exists
+        if (name === "tone" && newData.requestContent.trim()) {
+            handleGenerateReplyFromChange(newData);
+        }
+    };
+
+    const handleGenerateReplyFromChange = async (updatedData) => {
+        setIsGenerating(true);
+        try {
+            const response = await generateResponse(updatedData);
+            setOutput(response);
+        } catch (error) {
+            console.error("Error while generating reply:", error);
+            setOutput("Something went wrong while generating the reply.");
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     const handleGenerateReply = async (event) => {
         event.preventDefault();
+
         if (!data.requestContent.trim()) {
             setError({
                 errors: { requestContent: "Please enter a message context." },
@@ -45,24 +61,21 @@ const PilotConsole = () => {
             });
             return;
         }
-        setIsGenerating(true)
 
-        console.log("Sending request with data:", data);
+        setIsGenerating(true);
         try {
             const response = await generateResponse(data);
-            console.log("Received response:", response);
             setOutput(response);
         } catch (error) {
             console.error("Error while generating reply:", error);
-            setOutput("Something went wrong while generating the reply")
+            setOutput("Something went wrong while generating the reply.");
         } finally {
             setIsGenerating(false);
         }
-
-    }
+    };
 
     const copyToClipboard = async () => {
-        if (!output) return
+        if (!output) return;
 
         try {
             await navigator.clipboard.writeText(output);
@@ -71,18 +84,15 @@ const PilotConsole = () => {
         } catch (error) {
             console.error("Failed to copy text: ", error);
         }
-
-    }
+    };
 
     return (
         <div className="bg-white rounded-2xl shadow-xl p-8">
             <div className="grid md:grid-cols-2 gap-8">
                 {/* Input Section */}
                 <form onSubmit={handleGenerateReply} className="space-y-6">
-
-                    {/* Input field */}
                     <div>
-                        <label htmlFor="input" className="block text-sm font-semibold text-gray-700 mb-2">
+                        <label htmlFor="requestContent" className="block text-sm font-semibold text-gray-700 mb-2">
                             Your Message Context
                         </label>
                         <textarea
@@ -94,12 +104,11 @@ const PilotConsole = () => {
                             placeholder="Describe the message you received or the situation you need to respond to..."
                             className="w-full h-40 p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none resize-none text-gray-700 placeholder-gray-400 transition-colors"
                         />
+                        {error.isError && error.errors.requestContent && (
+                            <p className="text-red-500 text-sm mt-1">{error.errors.requestContent}</p>
+                        )}
                     </div>
-                    {error.isError && error.errors.requestContent && (
-                        <p className="text-red-500 text-sm mt-1">{error.errors.requestContent}</p>
-                    )}
 
-                    {/* Tone selection */}
                     <div>
                         <label htmlFor="tone" className="block text-sm font-semibold text-gray-700 mb-2">
                             Reply Type
@@ -122,7 +131,7 @@ const PilotConsole = () => {
 
                     <button
                         type="submit"
-                        disabled={!data?.requestContent?.trim?.() || isGenerating}
+                        disabled={isGenerating || !data.requestContent.trim()}
                         className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 px-6 rounded-xl hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                         {isGenerating ? (
@@ -134,7 +143,6 @@ const PilotConsole = () => {
                             "Generate Reply"
                         )}
                     </button>
-
                 </form>
 
                 {/* Output Section */}
@@ -175,10 +183,9 @@ const PilotConsole = () => {
                         </div>
                     )}
                 </div>
-
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default PilotConsole;

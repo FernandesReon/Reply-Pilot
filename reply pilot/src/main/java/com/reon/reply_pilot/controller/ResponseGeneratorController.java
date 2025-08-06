@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/response")
-@CrossOrigin(origins = "http://localhost:5173")
 public class ResponseGeneratorController {
     private final Logger logger = LoggerFactory.getLogger(ResponseGeneratorController.class);
     private final ResponseGeneratorService responseGeneratorService;
