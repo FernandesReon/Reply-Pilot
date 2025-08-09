@@ -4,7 +4,7 @@ const Notice = () => {
             <div className="max-w-4xl mx-auto px-4 py-3">
                 <div className="flex justify-center items-center text-sm font-medium text-center space-x-2">
                     <span>
-                        The backend server may take a few seconds to wake up due to free-tier hosting limitations.
+                        The backend server may take a few seconds or a minute to wake up due to free-tier hosting limitations.
                     </span>
                 </div>
             </div>
